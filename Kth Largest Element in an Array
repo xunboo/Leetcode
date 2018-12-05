@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+
+/*
+Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+Example 1:
+
+Input: [3,2,1,5,6,4] and k = 2
+Output: 5
+Example 2:
+
+Input: [3,2,3,1,2,4,5,5,6] and k = 4
+Output: 4
+Note: 
+You may assume k is always valid, 1 ≤ k ≤ array's length.
+*/
+
+class Solution {
+public:
+    void swap(vector<int>& nums, int i1, int i2){
+        int temp = nums[i1];
+        nums[i1] = nums[i2];
+        nums[i2] = temp;
+    }
+    
+    void minHeapify(vector<int>& nums, int index, int max_index){
+        int left = (index<<1) + 1; // must use ()
+        int right = left + 1; 
+        
+        if(left > max_index)  //must left > max_index (one leaf case); right will be checked below
+            return;
+        
+        int minIndex = left;
+        
+        if(right <= max_index && nums[right] < nums[left]){
+            minIndex = right;
+        }
+        if(nums[minIndex] < nums[index]){
+            swap(nums, minIndex, index);
+            minHeapify(nums, minIndex, max_index);
+        }
+    }
+    
+    void heapSort(vector<int>& nums){
+        int len = nums.size();
+        
+        //make min Heap
+        for(int i = (len >> 1) - 1; i>=0; i-- ){
+            minHeapify(nums, i, len - 1);
+        }
+        
+        //sort min heap
+        for(int i=len - 1;i>0; i--){
+            swap(nums, 0, i);
+            minHeapify(nums, 0, i - 1);
+        }
+    }
+    
+    
+    int findKthLargest(vector<int>& nums, int k) {
+        heapSort(nums);
+        
+       // for(int i = 0; i<nums.size();i++)
+       //     cout << nums[i];
+        
+        return nums[k-1];
+    }
+};
